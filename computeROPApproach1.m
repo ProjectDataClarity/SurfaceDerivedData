@@ -1,7 +1,7 @@
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    %{
    
-   Copyright [2016] [Pradeepkumar Ashok] [Project Data Clarity]
+   Copyright [2016] [Pradeepkumar Ashok, Dandan Zheng] [Project Data Clarity]
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -79,13 +79,27 @@
           rateOfPenetration_ftperhr(i) = NaN;
      end 
      
-     
+    PreviousBlockHeight = blockHeight_feet(timeInterval_sec);
+    PreviousTime = timeInterval_sec;
+    
+    
      for i=(timeInterval_sec+1):length(blockHeight_feet)
-        
+        rateOfPenetration_ftperhr(i) = NaN; 
+         CurrentBlockHeight = blockHeight_feet(i);
+         CurrentTime = timeInterval_sec*i;
+         
+        if(rigStatesForSampleData1(i)~=2)
+           PreviousBlockHeight = CurrentBlockHeight;
+           PreviousTime = CurrentTime;
+           
+        end
         if(rigStatesForSampleData1(i)==2)
-          rateOfPenetration_ftperhr(i) = 3600.0/3.28*((blockHeight_feet(i-timeInterval_sec)-blockHeight_feet(i)))/timeInterval_sec;
-        else
-         rateOfPenetration_ftperhr(i) = 0;
+          if (CurrentBlockHeight-PreviousBlockHeight < 0)
+             
+              rateOfPenetration_ftperhr(i) = (CurrentBlockHeight-PreviousBlockHeight)*-1/((CurrentTime-PreviousTime)/3600);
+          else
+             rateOfPenetration_ftperhr(i) = 0;
+          end 
         end
         
      end 

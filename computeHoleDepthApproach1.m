@@ -1,7 +1,7 @@
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    %{
    
-   Copyright [2016] [Pradeepkumar Ashok, Dandan Zheng] [Project Data Clarity]
+   Copyright [2016] [Dandan Zheng] [Project Data Clarity]
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
    %}
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-   function bitDepth_feet  = computeBitDepthApproach1(currentBitDepth_feet, statesData) 
+   function HoleDepth_feet  = computeHoleDepthApproach1(currentBitDepth_feet, statesData) 
      
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    %{
@@ -30,7 +30,7 @@
    Metadata needed for this approach: 
    
    1. currentBitDepth_feet
-   2. rigState
+   
       
    Other Comments:
          
@@ -48,7 +48,7 @@
       statesData = 'RigStatesForSampleData1'; 
       end
       
-      currentBitDepth_feet
+    
       
      % Load the dataset into memory
      
@@ -75,19 +75,19 @@
      
      waitbar(0.3, h, 'Performing Calculations'); 
          
-     bitDepth_feet(1) = currentBitDepth_feet;
+     HoleDepth_feet(1) = currentBitDepth_feet;
            
      for i= 2:length(blockHeight_feet)
         
-        if(rigStatesForSampleData1(i)==2)||(rigStatesForSampleData1(i)==4) || (rigStatesForSampleData1(i)==8)|| (rigStatesForSampleData1(i)==9)
-          bitDepth_feet(i) = bitDepth_feet(i-1)+(blockHeight_feet(i-1)-blockHeight_feet(i));
+        if(rigStatesForSampleData1(i)==2)
+          HoleDepth_feet(i) = HoleDepth_feet(i-1)+(blockHeight_feet(i-1)-blockHeight_feet(i));
         else
-          bitDepth_feet(i) = bitDepth_feet(i-1);
+          HoleDepth_feet(i) = HoleDepth_feet(i-1);
         end
         
      end 
      
-     bitDepth_feet = bitDepth_feet';
+     HoleDepth_feet = HoleDepth_feet';
      
      % End of calculation
        
@@ -96,8 +96,8 @@
      waitbar(0.7, h, 'Writing Data to CSV file'); 
              
      outfileName = fullfile(pwd, 'OutputResults', 'AnalysisResults.csv' );
-     dataToExport = [rawDataAllChannels,rigStatesForSampleData1,bitDepth_feet]; 
-     header='Block Height(feet),Flow Out(%),Hookload(klbf),Top Drive Speed(RPM),Strokes Per Minute #1,Strokes Per Minute #2,Standpipe Pressure (psi),Top Drive Torque (ftlb),Rig State Code,Bit Depth(ft)'; 
+     dataToExport = [rawDataAllChannels,rigStatesForSampleData1,HoleDepth_feet]; 
+     header='Block Height(feet),Flow Out(%),Hookload(klbf),Top Drive Speed(RPM),Strokes Per Minute #1,Strokes Per Minute #2,Standpipe Pressure (psi),Top Drive Torque (ftlb),Rig State Code,Hole Depth(ft)'; 
      dlmwrite(outfileName,header,'delimiter','');
      dlmwrite(outfileName,dataToExport,'delimiter',',','-append');
      
@@ -156,10 +156,10 @@
      ylabel('Top Drive Torque (ftlb)');
    
      subplot(3,3,9);
-     plot(bitDepth_feet, 'm');
-     title (sprintf('Bit Depth (feet)'));
+     plot(HoleDepth_feet, 'm');
+     title (sprintf('Hole Depth (feet)'));
      xlabel('Data Instance (sec)');
-     ylabel('Bit Depth (feet)');
+     ylabel('Hole Depth (feet)');
      
      
    end
