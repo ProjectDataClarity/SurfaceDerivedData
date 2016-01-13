@@ -75,36 +75,30 @@
      
      waitbar(0.3, h, 'Performing Calculations'); 
          
-     for i=1:timeInterval_sec
-          rateOfPenetration_ftperhr(i) = NaN;
-     end 
+     timeIntervalCounter = 0;
      
-    PreviousBlockHeight = blockHeight_feet(timeInterval_sec);
-    PreviousTime = timeInterval_sec;
-    
-    
-     for i=(timeInterval_sec+1):length(blockHeight_feet)
-        rateOfPenetration_ftperhr(i) = NaN; 
-         CurrentBlockHeight = blockHeight_feet(i);
-         CurrentTime = timeInterval_sec*i;
+     for i=1:length(blockHeight_feet) 
+         % If the current state is drilling 
+         if(rigStatesForSampleData1(i)==2) 
+              % Once it starts drilling wait until after "timeInterval_sec" seconds before outputing an ROP value. Otherwise ROP = NaN.
+               timeIntervalCounter = timeIntervalCounter + 1;
+               if(timeIntervalCounter<=timeInterval_sec)
+                  rateOfPenetration_ftperhr(i) = NaN;
+               else 
+                  rateOfPenetration_ftperhr(i) = ((blockHeight_feet(i-timeInterval_sec)-blockHeight_feet(i)))/(timeInterval_sec/3600); 
+               end
          
-        if(rigStatesForSampleData1(i)~=2)
-           PreviousBlockHeight = CurrentBlockHeight;
-           PreviousTime = CurrentTime;
-           
-        end
-        if(rigStatesForSampleData1(i)==2)
-          if (CurrentBlockHeight-PreviousBlockHeight < 0)
-             
-              rateOfPenetration_ftperhr(i) = (CurrentBlockHeight-PreviousBlockHeight)*-1/((CurrentTime-PreviousTime)/3600);
-          else
-             rateOfPenetration_ftperhr(i) = 0;
-          end 
-        end
-        
-     end 
-     
-     rateOfPenetration_ftperhr = rateOfPenetration_ftperhr';
+         else 
+         
+           % If not drilling
+           rateOfPenetration_ftperhr(i) = NaN;
+           timeIntervalCounter = 0; 
+         
+         end 
+          
+     end  
+       
+     rateOfPenetration_ftperhr = rateOfPenetration_ftperhr'; 
      
      % End of calculation
        

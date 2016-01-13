@@ -1,7 +1,7 @@
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    %{
    
-   Copyright [2016] [Dandan Zheng] [Project Data Clarity]
+   Copyright [2016] [Dandan Zheng, Pradeepkumar Ashok] [Project Data Clarity]
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -18,20 +18,19 @@
    %}
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    
-   function rateOfPenetration_hrperft  = computeCutFootROPApproach1(timeInterval_sec, currentBitDepth_feet, statesData) 
+   function rateOfPenetration_hrperft  = computeCutFootROPApproach1(depthInterval_feet, statesData) 
      
    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
    %{
    
    Comments about this program go here:  
    
-   This is CutFoot_1Ft Approach of calculation ROP: More details Later
+   This is cut foot approach to calculating ROP: More details Later
    
    Metadata needed for this approach: 
    
-   1. timeInterval_sec
-   2. currentBitDepth_feet
-   3. rigState
+   1. depthInterval_feet
+   2. rigState
       
    Other Comments:
          
@@ -41,20 +40,14 @@
     % Default Arguments in case the user does not specify any argument  
     
     if nargin < 1
-    timeInterval_sec =30;
+    depthInterval_feet =1;
     statesData = 'RigStatesForSampleData1'; 
     end
     
     if nargin < 2
-    currentBitDepth_feet =3000;
     statesData = 'RigStatesForSampleData1'; 
     end
       
-    if nargin < 3
-    statesData = 'RigStatesForSampleData1'; 
-    end
-   
-   
      % Load the dataset into memory
      
      h = waitbar(0, 'Loading Data'); 
@@ -80,58 +73,42 @@
      
      waitbar(0.3, h, 'Performing Calculations'); 
      
-     %Hole Depth Calculation
-     HoleDepth_feet(1) = currentBitDepth_feet;
-           
-     for i= 2:length(blockHeight_feet)
-        
-        if(rigStatesForSampleData1(i)==2)
-          HoleDepth_feet(i) = HoleDepth_feet(i-1)+(blockHeight_feet(i-1)-blockHeight_feet(i));
-        else
-          HoleDepth_feet(i) = HoleDepth_feet(i-1);
-        end
-        
-     end 
-     
-     HoleDepth_feet = HoleDepth_feet';
-     
-     
-     %sp = starting point for calculating cut foot ROP _1 ft
-        sp = 2;
-        while HoleDepth_feet(sp)- HoleDepth_feet(1) < 1 
-                rateOfPenetration_hrperft(sp-1) = NaN;
-                sp = sp+1;
-        end 
-        
- 
-    PreviousHoleDepth = HoleDepth_feet(sp);
-    PreviousTime = timeInterval_sec*sp;
-    CurrentCutFootROP = NaN;
+     flag = 0; % This flag is to reset the startTime
+     currentROP = NaN;
     
-    %CutFootROP in Hr/Ft
-     for i= sp:length(blockHeight_feet)
-         rateOfPenetration_hrperft(i) = NaN; 
-         CurrentHoleDepth = HoleDepth_feet(i);
-         CurrentTime = timeInterval_sec*i;
-         % when rig state is 'not drilling', ROP is shown as NaN
-         if   rigStatesForSampleData1(i)~=2 
-             rateOfPenetration_hrperft(i) = NaN;
-             PreviousHoleDepth = HoleDepth_feet(i);
-             PreviousTime = timeInterval_sec*i;
-             CurrentCutFootROP = NaN;
-         end
-         % if drilling
-         if (rigStatesForSampleData1(i)==2) && CurrentHoleDepth - PreviousHoleDepth >= 1 
-            rateOfPenetration_hrperft(i) = (CurrentTime-PreviousTime)/3600/(CurrentHoleDepth - PreviousHoleDepth);
-            CurrentCutFootROP = rateOfPenetration_hrperft(i);
-            PreviousHoleDepth = CurrentHoleDepth;
-            PreviousTime = CurrentTime;
-         else
-             rateOfPenetration_hrperft(i) = CurrentCutFootROP;
-         end
+     for i=1:length(blockHeight_feet) 
+             
+         if(rigStatesForSampleData1(i)==2) 
+            % Once the state becomes drilling keep track of increase in depth.
+               
+               if (flag == 0)
+                  startTime = i;
+                  flag = 1;
+               end
+               
+               depthIncrease_feet = blockHeight_feet(startTime)-blockHeight_feet(i);
+               
+               if(depthIncrease_feet<depthInterval_feet)
+                  rateOfPenetration_hrperft(i) = currentROP;
+               else 
+                  rateOfPenetration_hrperft(i) = ((i-startTime)/3600)/depthIncrease_feet; 
+                  currentROP = rateOfPenetration_hrperft(i);
+                  depthIncrease_feet = 0;
+                  flag = 0; % So that the startTime gets reset
+               end
          
-     end
-     
+         else 
+         
+           % If not drilling
+           rateOfPenetration_hrperft(i) = NaN;
+           currentROP = NaN;
+           flag = 0; % So that the startTime gets reset
+           
+         
+         end 
+          
+     end  
+
      
      rateOfPenetration_hrperft = rateOfPenetration_hrperft';
      
@@ -145,7 +122,7 @@
              
      outfileName = fullfile(pwd, 'OutputResults', 'AnalysisResults.csv' );
      dataToExport = [rawDataAllChannels,rigStatesForSampleData1,rateOfPenetration_hrperft]; 
-     header='Block Height(feet),Flow Out(%),Hookload(klbf),Top Drive Speed(RPM),Strokes Per Minute #1,Strokes Per Minute #2,Standpipe Pressure (psi),Top Drive Torque (ftlb),Rig State Code,Rate Of Penetration(hr/ft)'; 
+     header='Block Height(feet),Flow Out(%),Hookload(klbf),Top Drive Speed(RPM),Strokes Per Minute #1,Strokes Per Minute #2,Standpipe Pressure (psi),Top Drive Torque (ftlb),Rig State Code,Cut Foot Rate Of Penetration(hr/ft)'; 
      dlmwrite(outfileName,header,'delimiter','');
      dlmwrite(outfileName,dataToExport,'delimiter',',','-append');
      
@@ -205,9 +182,9 @@
    
      subplot(3,3,9);
      plot(rateOfPenetration_hrperft, 'm');
-     title (sprintf('Rate Of Penetration(hr/ft)'));
+     title (sprintf('Cut Foot  Rate Of Penetration(hr/ft)'));
      xlabel('Data Instance (sec)');
-     ylabel('Rate Of Penetration(hr/ft)');
+     ylabel('Cut Foot Rate Of Penetration(hr/ft)');
      
      
    end
