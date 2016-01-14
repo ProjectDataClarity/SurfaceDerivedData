@@ -103,7 +103,7 @@
              
      outfileName = fullfile(pwd, 'OutputResults', 'AnalysisResults.csv' );
      dataToExport = [rawDataAllChannels,rigStatesForSampleData1,weightOnBit_klbf]; 
-     header='Block Height(feet),Flow Out(%),Hookload(klbf),Top Drive Speed(RPM),Strokes Per Minute #1,Strokes Per Minute #2,Standpipe Pressure (psi),Top Drive Torque (ftlb),Rig State Code,WOB (klbf)'; 
+     header='Block Height(feet),Flow Out(%),Hookload(klbf),Top Drive Speed(RPM),Strokes Per Minute #1,Strokes Per Minute #2,Standpipe Pressure (psi),Top Drive Torque (ftlb),Rig State Code,Weight on Bit (klbf)'; 
      dlmwrite(outfileName,header,'delimiter','');
      dlmwrite(outfileName,dataToExport,'delimiter',',','-append');
      
@@ -163,9 +163,9 @@
    
      subplot(3,3,9);
      plot(weightOnBit_klbf, 'm');
-     title (sprintf('WOB(klb/ft)'));
+     title (sprintf('WOB(klbf)'));
      xlabel('Data Instance (sec)');
-     ylabel('WOB_klbf(klb/ft)');
+     ylabel('WOB_klbf(klbf)');
      
      
    end
