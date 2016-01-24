@@ -83,7 +83,7 @@
               % Once it starts drilling wait until after "timeInterval_sec" seconds before outputing an ROP value. Otherwise ROP = NaN.
                timeIntervalCounter = timeIntervalCounter + 1;
                if(timeIntervalCounter<=timeInterval_sec)
-                  rateOfPenetration_ftperhr(i) = NaN;
+                  rateOfPenetration_ftperhr(i) = 0;
                else 
                   rateOfPenetration_ftperhr(i) = ((blockHeight_feet(i-timeInterval_sec)-blockHeight_feet(i)))/(timeInterval_sec/3600); 
                end
@@ -91,7 +91,7 @@
          else 
          
            % If not drilling
-           rateOfPenetration_ftperhr(i) = NaN;
+           rateOfPenetration_ftperhr(i) = 0;
            timeIntervalCounter = 0; 
          
          end 
