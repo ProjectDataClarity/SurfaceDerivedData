@@ -116,7 +116,7 @@
      
      waitbar(0.7, h, 'Writing Data to CSV file'); 
      
-     fullfile(pwd, 'OutputResults', 'AnalysisResults.csv' )
+     fullfile(pwd, 'OutputResults', 'AnalysisResults.csv' );
              
      outfileName = fullfile(pwd, 'OutputResults', 'AnalysisResults.csv' );
      dataToExport = [rawDataAllChannels,rigStatesForSampleData1,stickSlipIndex]; 
