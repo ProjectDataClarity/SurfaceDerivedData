@@ -53,7 +53,7 @@
      % Load the dataset into memory
      
      h = waitbar(0, 'Loading Data'); 
-     rawDataAllChannels = load (fullfile(pwd, 'InputData', 'SampleData1'));
+     rawDataAllChannels = load (fullfile(pwd, 'InputData', 'SampleData1.csv'));
 
      if (nargin<2)
         rigStatesForSampleData1 = load('-ascii', fullfile(pwd, 'InputData', statesData));
@@ -62,14 +62,16 @@
      % Separate arrays are created for each data channel for ease of use. 
      % Not all of the channels will be needed for all derived data calculations. 
      
-     blockHeight_feet = rawDataAllChannels(:,1);
-     flowOut_percent = rawDataAllChannels(:,2);
-     hookLoad_klbf = rawDataAllChannels(:,3);
-     topdriveSpeed_rpm = rawDataAllChannels(:,4);
-     strokesPerMinute1_spm = rawDataAllChannels(:,5);
-     strokesPerMinute2_spm = rawDataAllChannels(:,6);
-     standPipePressure_psi = rawDataAllChannels(:,7);
-     topDriveTorque_ftlb = rawDataAllChannels(:,8);
+     time_sec = rawDataAllChannels(:,1)
+     blockHeight_feet = rawDataAllChannels(:,2);
+     flowOut_percent = rawDataAllChannels(:,3);
+     hookLoad_klbf = rawDataAllChannels(:,4);
+     topdriveSpeed_rpm = rawDataAllChannels(:,5);
+     strokesPerMinute1_spm = rawDataAllChannels(:,6);
+     strokesPerMinute2_spm = rawDataAllChannels(:,7);
+     standPipePressure_psi = rawDataAllChannels(:,8);
+     topDriveTorque_ftlb = rawDataAllChannels(:,9);
+     dataInstances_nounit = rawDataAllChannels(:,10);
    
      % Do the calculation here
      
@@ -77,7 +79,7 @@
          
      bitDepth_feet(1) = currentBitDepth_feet;
            
-     for i= 2:length(blockHeight_feet)
+     for i= 2:length(dataInstances_nounit)
         
         if(rigStatesForSampleData1(i)==2)||(rigStatesForSampleData1(i)==4) || (rigStatesForSampleData1(i)==8)|| (rigStatesForSampleData1(i)==9)
           bitDepth_feet(i) = bitDepth_feet(i-1)+(blockHeight_feet(i-1)-blockHeight_feet(i));

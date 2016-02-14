@@ -45,7 +45,7 @@
    
      % Load the dataset into memory
      
-     rawDataAllChannels = load (fullfile(pwd, 'InputData', 'SampleData1'));
+     rawDataAllChannels = load (fullfile(pwd, 'InputData', 'SampleData1.csv'));
 
      if (nargin<2)
         rigStatesForSampleData1 = load('-ascii', fullfile(pwd, 'InputData', statesData));

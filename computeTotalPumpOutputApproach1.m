@@ -60,25 +60,27 @@
      % Load the dataset into memory
      
      h = waitbar(0, 'Loading Data'); 
-     rawDataAllChannels = load (fullfile(pwd, 'InputData', 'SampleData1'));
+     rawDataAllChannels = load (fullfile(pwd, 'InputData', 'SampleData1.csv'));
      
      % Separate arrays are created for each data channel for ease of use. 
      % Not all of the channels will be needed for all derived data calculations. 
      
-     blockHeight_feet = rawDataAllChannels(:,1);
-     flowOut_percent = rawDataAllChannels(:,2);
-     hookLoad_klbf = rawDataAllChannels(:,3);
-     topdriveSpeed_rpm = rawDataAllChannels(:,4);
-     strokesPerMinute1_spm = rawDataAllChannels(:,5);
-     strokesPerMinute2_spm = rawDataAllChannels(:,6);
-     standPipePressure_psi = rawDataAllChannels(:,7);
-     topDriveTorque_ftlb = rawDataAllChannels(:,8);
+     time_sec = rawDataAllChannels(:,1)
+     blockHeight_feet = rawDataAllChannels(:,2);
+     flowOut_percent = rawDataAllChannels(:,3);
+     hookLoad_klbf = rawDataAllChannels(:,4);
+     topdriveSpeed_rpm = rawDataAllChannels(:,5);
+     strokesPerMinute1_spm = rawDataAllChannels(:,6);
+     strokesPerMinute2_spm = rawDataAllChannels(:,7);
+     standPipePressure_psi = rawDataAllChannels(:,8);
+     topDriveTorque_ftlb = rawDataAllChannels(:,9);
+     dataInstances_nounit = rawDataAllChannels(:,10);
    
      % Do the calculation here
      
      waitbar(0.3, h, 'Performing Calculations'); 
          
-     for i=1:length(blockHeight_feet)
+     for i=1:length(dataInstances_nounit)
         
          totalStrokesPerMinute_spm(i) = strokesPerMinute1_spm(i)+strokesPerMinute2_spm(i);
          totalPumpOutput_gpm(i) = 0.000102*(linerSize_in.*linerSize_in)*strokeLength_in*efficiency_percent*totalStrokesPerMinute_spm(i);
