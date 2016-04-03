@@ -74,7 +74,7 @@
      % Separate arrays are created for each data channel for ease of use. 
      % Not all of the channels will be needed for all derived data calculations. 
      
-     time_sec = rawDataAllChannels(:,1);
+     time_sec = rawDataAllChannels(:,1)
      blockHeight_feet = rawDataAllChannels(:,2);
      flowOut_percent = rawDataAllChannels(:,3);
      hookLoad_klbf = rawDataAllChannels(:,4);
@@ -83,7 +83,9 @@
      strokesPerMinute2_spm = rawDataAllChannels(:,7);
      standPipePressure_psi = rawDataAllChannels(:,8);
      topDriveTorque_ftlb = rawDataAllChannels(:,9);
-     dataInstances_nounit = rawDataAllChannels(:,10);
+     surveyInclination_degrees = rawDataAllChannels(:,10);
+     surveyAzimuth_degrees = rawDataAllChannels(:,11);
+     dataInstances_nounit = rawDataAllChannels(:,12);
    
      % Do the calculation here
      
@@ -127,8 +129,8 @@
      fullfile(pwd, 'OutputResults', 'AnalysisResults.csv' )
              
      outfileName = fullfile(pwd, 'OutputResults', 'AnalysisResults.csv' );
-     dataToExport = [rawDataAllChannels,totalPumpOutput_gpm]; 
-     header='Time(Sec),Block Height(feet),Flow Out(%),Hookload(klbf),Top Drive Speed(RPM),Strokes Per Minute #1,Strokes Per Minute #2,Standpipe Pressure (psi),Top Drive Torque (ftlb),Data Instance, Total Pump Output(gpm)'; 
+     dataToExport = [rawDataAllChannels,rigStatesForSampleData1, totalPumpOutput_gpm]; 
+     header='Time(sec), Block Height(feet),Flow Out(%),Hookload(klbf),Top Drive Speed(RPM),Strokes Per Minute #1,Strokes Per Minute #2,Standpipe Pressure (psi),Top Drive Torque (ftlb),Survey Inclination (degrees), Survey Azimuth (degrees), Data Instance, Rig State Code, Total Pump Output(gpm)'; 
      dlmwrite(outfileName,header,'delimiter','');
      dlmwrite(outfileName,dataToExport,'delimiter',',','-append');
      

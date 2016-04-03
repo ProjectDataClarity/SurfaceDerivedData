@@ -70,7 +70,7 @@
              
      outfileName = fullfile(pwd, 'OutputResults', 'AnalysisResults.csv' );
      dataToExport = [rawDataAllChannels,rigStatesForSampleData1,ropApproach1, ropInstantaneous, ropApproach2 ]; 
-     header='Block Height(feet),Flow Out(%),Hookload(klbf),Top Drive Speed(RPM),Strokes Per Minute #1,Strokes Per Minute #2,Standpipe Pressure (psi),Top Drive Torque (ftlb),Rig State Code,ROP Approach 1 (30 Sec), Instantaneous ROP, ROP Approach 2 (30 Sec)'; 
+     header='Time(sec), Block Height(feet),Flow Out(%),Hookload(klbf),Top Drive Speed(RPM),Strokes Per Minute #1,Strokes Per Minute #2,Standpipe Pressure (psi),Top Drive Torque (ftlb),Survey Inclination (degrees), Survey Azimuth (degrees), Data Instance, Rig State Code, ROP Approach 1 (30 Sec), Instantaneous ROP, ROP Approach 2 (30 Sec)'; 
      dlmwrite(outfileName,header,'delimiter','');
      dlmwrite(outfileName,dataToExport,'delimiter',',','-append');
   

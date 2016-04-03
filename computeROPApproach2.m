@@ -71,7 +71,9 @@
      strokesPerMinute2_spm = rawDataAllChannels(:,7);
      standPipePressure_psi = rawDataAllChannels(:,8);
      topDriveTorque_ftlb = rawDataAllChannels(:,9);
-     dataInstances_nounit = rawDataAllChannels(:,10);
+     surveyInclination_degrees = rawDataAllChannels(:,10);
+     surveyAzimuth_degrees = rawDataAllChannels(:,11);
+     dataInstances_nounit = rawDataAllChannels(:,12);
    
      % Do the calculation here
      
@@ -130,7 +132,7 @@
              
      outfileName = fullfile(pwd, 'OutputResults', 'AnalysisResults.csv' );
      dataToExport = [rawDataAllChannels,rigStatesForSampleData1,rateOfPenetration_ftperhr]; 
-     header='Block Height(feet),Flow Out(%),Hookload(klbf),Top Drive Speed(RPM),Strokes Per Minute #1,Strokes Per Minute #2,Standpipe Pressure (psi),Top Drive Torque (ftlb),Rig State Code,Rate Of Penetration(ft/hr)'; 
+     header='Time(sec), Block Height(feet),Flow Out(%),Hookload(klbf),Top Drive Speed(RPM),Strokes Per Minute #1,Strokes Per Minute #2,Standpipe Pressure (psi),Top Drive Torque (ftlb),Survey Inclination (degrees), Survey Azimuth (degrees), Data Instance, Rig State Code, Rate Of Penetration(ft/hr)'; 
      dlmwrite(outfileName,header,'delimiter','');
      dlmwrite(outfileName,dataToExport,'delimiter',',','-append');
      
